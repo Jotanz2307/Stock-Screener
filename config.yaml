@@ -11,13 +11,25 @@ tickers:
   - ANTM
   - GOTO
 
-# Periode data harga harian yang diambil
+# Periode data harga harian yang diambil (dari Yahoo Finance)
 period: 1y
+
+# Sumber EPS dan BVPS untuk harga wajar: tradingview atau yahoo.
+# Saham yang gagal diambil dari TradingView otomatis dicoba lewat Yahoo.
+fundamentals_source: tradingview
 
 # Aturan filter. Hapus atau ubah sesuai kebutuhan.
 # Kolom yang tersedia: close, volume, avg_volume_20, sma_20, sma_50,
-# rsi_14, change_1d_pct, change_20d_pct, pct_from_52w_high
+# rsi_14, change_1d_pct, change_20d_pct, pct_from_52w_high,
+# eps, bvps, graham_value (harga wajar), mos_pct (margin of safety, %)
 rules:
   - "close > sma_50"          # harga di atas rata-rata 50 hari (tren naik)
   - "rsi_14 < 70"             # belum overbought
   - "avg_volume_20 > 1000000" # cukup likuid
+  - "close < graham_value"    # harga di bawah harga wajar Graham
+  # - "mos_pct > 20"          # diskon minimal 20% dari harga wajar
+
+# Opsional: isi EPS/BVPS manual (rupiah per saham) jika data Yahoo
+# kosong atau salah. Nilai di sini menimpa data Yahoo.
+# fundamentals:
+#   BBCA: {eps: 450, bvps: 2200}
