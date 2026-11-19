@@ -11,8 +11,12 @@ tickers:
   - ANTM
   - GOTO
 
-# Periode data harga harian yang diambil
+# Periode data harga harian yang diambil (dari Yahoo Finance)
 period: 1y
+
+# Sumber EPS dan BVPS untuk harga wajar: tradingview atau yahoo.
+# Saham yang gagal diambil dari TradingView otomatis dicoba lewat Yahoo.
+fundamentals_source: tradingview
 
 # Aturan filter. Hapus atau ubah sesuai kebutuhan.
 # Kolom yang tersedia: close, volume, avg_volume_20, sma_20, sma_50,

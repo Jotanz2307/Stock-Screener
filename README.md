@@ -37,8 +37,10 @@ graham_value = akar(22.5 x EPS x BVPS)
 mos_pct      = (graham_value / close - 1) x 100
 ```
 
-EPS (laba per saham 12 bulan terakhir) dan BVPS (nilai buku per saham) diambil
-dari Yahoo Finance. Saham yang rugi (EPS <= 0) atau ekuitasnya negatif tidak
+EPS (laba per saham 12 bulan terakhir, diluted) dan BVPS (nilai buku per saham,
+kuartal terakhir) diambil dari TradingView secara default, atau dari Yahoo
+Finance jika `fundamentals_source: yahoo`. Saham yang gagal diambil dari
+TradingView otomatis dicoba lewat Yahoo. Saham yang rugi (EPS <= 0) atau ekuitasnya negatif tidak
 punya harga wajar Graham, jadi kolomnya kosong dan tidak lolos aturan
 `close < graham_value`. `mos_pct` positif berarti harga di bawah harga wajar.
 
@@ -50,10 +52,18 @@ fundamentals:
   BBCA: {eps: 450, bvps: 2200}
 ```
 
+## Catatan soal TradingView
+
+TradingView tidak punya API data resmi. Screener ini memakai library tidak resmi
+[`tradingview-screener`](https://pypi.org/project/tradingview-screener/), yang
+bisa berhenti bekerja jika TradingView mengubah situsnya. Aturan TradingView
+juga melarang pengambilan data otomatis, jadi pakai seperlunya untuk keperluan
+pribadi. Harga harian tetap diambil dari Yahoo Finance.
+
 ## Struktur
 
 ```
-screener/data.py        ambil data harga (yfinance)
+screener/data.py        ambil harga (Yahoo) dan EPS/BVPS (TradingView atau Yahoo)
 screener/indicators.py  hitung SMA, RSI, perubahan harga, dll.
 screener/valuation.py   rumus harga wajar (Graham Number)
 screener/rules.py       terapkan aturan filter

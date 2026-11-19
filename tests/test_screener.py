@@ -3,7 +3,7 @@ import math
 import numpy as np
 import pandas as pd
 
-from screener.data import to_yahoo
+from screener.data import TV_BVPS, TV_EPS, parse_tradingview, to_yahoo
 from screener.indicators import build_table, rsi
 from screener.rules import apply_rules
 from screener.valuation import graham_value
@@ -47,3 +47,15 @@ def test_rule_below_fair_value():
     hits = apply_rules(table, ["close < graham_value"])
     assert list(hits.index) == ["MURAH"]
     assert table.loc["MURAH", "mos_pct"] > 0
+
+
+def test_parse_tradingview():
+    df = pd.DataFrame([
+        {"ticker": "IDX:BBCA", "currency": "IDR", "fundamental_currency_code": "IDR", TV_EPS: 450.0, TV_BVPS: 2200.0},
+        {"ticker": "IDX:ADRO", "currency": "IDR", "fundamental_currency_code": "USD", TV_EPS: 0.05, TV_BVPS: 0.3},
+        {"ticker": "IDX:GOTO", "currency": "IDR", "fundamental_currency_code": "IDR", TV_EPS: float("nan"), TV_BVPS: 80.0},
+    ])
+    out = parse_tradingview(df)
+    assert out["BBCA"] == {"eps": 450.0, "bvps": 2200.0}
+    assert "ADRO" not in out  # mata uang laporan beda, dilewati
+    assert out["GOTO"]["eps"] is None

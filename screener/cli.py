@@ -3,7 +3,7 @@ import argparse
 
 import yaml
 
-from screener.data import fetch_fundamentals, fetch_prices
+from screener.data import fetch_prices, get_fundamentals
 from screener.indicators import build_table
 from screener.rules import apply_rules
 
@@ -18,7 +18,7 @@ def main() -> None:
         cfg = yaml.safe_load(f)
 
     prices = fetch_prices(cfg["tickers"], cfg.get("period", "1y"))
-    fundamentals = fetch_fundamentals(list(prices))
+    fundamentals = get_fundamentals(list(prices), cfg.get("fundamentals_source", "tradingview"))
     # Nilai manual di config menimpa data Yahoo
     for t, vals in (cfg.get("fundamentals") or {}).items():
         fundamentals.setdefault(t.upper(), {}).update(vals)
