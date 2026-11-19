@@ -3,7 +3,7 @@ import argparse
 
 import yaml
 
-from screener.data import fetch_prices
+from screener.data import fetch_fundamentals, fetch_prices
 from screener.indicators import build_table
 from screener.rules import apply_rules
 
@@ -18,13 +18,17 @@ def main() -> None:
         cfg = yaml.safe_load(f)
 
     prices = fetch_prices(cfg["tickers"], cfg.get("period", "1y"))
-    table = build_table(prices)
+    fundamentals = fetch_fundamentals(list(prices))
+    # Nilai manual di config menimpa data Yahoo
+    for t, vals in (cfg.get("fundamentals") or {}).items():
+        fundamentals.setdefault(t.upper(), {}).update(vals)
+    table = build_table(prices, fundamentals)
     rules = cfg.get("rules", [])
     hits = apply_rules(table, rules)
 
     print(f"Aturan: {' AND '.join(rules) or '(tidak ada)'}")
     print(f"Lolos {len(hits)} dari {len(table)} saham\n")
-    print(hits.sort_values("change_20d_pct", ascending=False).to_string() if len(hits) else "Tidak ada yang lolos.")
+    print(hits.sort_values("mos_pct", ascending=False, na_position="last").to_string() if len(hits) else "Tidak ada yang lolos.")
     if args.csv:
         hits.to_csv(args.csv)
         print(f"\nDisimpan ke {args.csv}")
