@@ -14,6 +14,18 @@ python -m screener.cli                  # tampilkan hasil
 python -m screener.cli --csv hasil.csv  # sekaligus simpan ke CSV
 ```
 
+## Dashboard
+
+```bash
+streamlit run app.py
+```
+
+Browser akan terbuka di http://localhost:8501. Di sidebar kamu bisa mengubah
+daftar saham, aturan filter, periode, dan sumber EPS/BVPS tanpa mengedit file.
+Halaman utama menampilkan ringkasan, tabel saham yang lolos filter (bisa diunduh
+CSV), dan grafik harga per saham dengan SMA 20/50 serta garis harga wajar.
+Data disimpan 1 jam; klik "Ambil ulang data" untuk memperbarui.
+
 ## Mengubah aturan
 
 Edit `config.yaml`. Setiap aturan adalah ekspresi pandas, semua aturan harus
@@ -67,7 +79,9 @@ screener/data.py        ambil harga (Yahoo) dan EPS/BVPS (TradingView atau Yahoo
 screener/indicators.py  hitung SMA, RSI, perubahan harga, dll.
 screener/valuation.py   rumus harga wajar (Graham Number)
 screener/rules.py       terapkan aturan filter
+screener/pipeline.py    alur utama (dipakai CLI dan dashboard)
 screener/cli.py         titik masuk command line
+app.py                  dashboard Streamlit
 tests/                  tes dengan data buatan (tanpa internet)
 ```
 
